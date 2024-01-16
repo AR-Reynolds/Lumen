@@ -1,0 +1,64 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!78 &1
+TagManager:
+  serializedVersion: 2
+  tags:
+  - THELIGHT
+  - DialogueTrigger
+  - PlayerProjectile
+  layers:
+  - Default
+  - TransparentFX
+  - Ignore Raycast
+  - 
+  - Water
+  - UI
+  - Ground
+  - Hazard
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  m_SortingLayers:
+  - name: Default
+    uniqueID: 0
+    locked: 0
+  - name: Background
+    uniqueID: 913333655
+    locked: 0
+  - name: Debug
+    uniqueID: 2665603295
+    locked: 0
+  - name: Middleground
+    uniqueID: 3602658299
+    locked: 0
+  - name: Player
+    uniqueID: 3856353751
+    locked: 0
+  - name: Ground
+    uniqueID: 3425386045
+    locked: 0
+  - name: Foreground
+    uniqueID: 1784368491
+    locked: 0
