@@ -12,7 +12,8 @@ GameObject:
   - component: {fileID: 6052934962018775126}
   - component: {fileID: 5317226956596101752}
   - component: {fileID: 3436235415827254151}
-  m_Layer: 0
+  - component: {fileID: -7594697321170078909}
+  m_Layer: 8
   m_Name: PlayerProjectile
   m_TagString: PlayerProjectile
   m_Icon: {fileID: 0}
@@ -109,9 +110,9 @@ Rigidbody2D:
   m_ExcludeLayers:
     serializedVersion: 2
     m_Bits: 0
-  m_Interpolate: 0
+  m_Interpolate: 1
   m_SleepingMode: 1
-  m_CollisionDetection: 0
+  m_CollisionDetection: 1
   m_Constraints: 0
 --- !u!61 &3436235415827254151
 BoxCollider2D:
@@ -158,3 +159,21 @@ BoxCollider2D:
   serializedVersion: 2
   m_Size: {x: 1, y: 1}
   m_EdgeRadius: 0
+--- !u!114 &-7594697321170078909
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1748580828293338879}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 50180e2bdfea72d4da4796190c84ec83, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  rb: {fileID: 5317226956596101752}
+  bulletActive: 1
+  hasSpread: 0
+  bulletSpeed: 15
+  fadeSpeed: 0
+  outOfBoundsTime: 5

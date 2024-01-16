@@ -16,9 +16,11 @@ public class PlayerMovement : MonoBehaviour
 
     [Header("Player States")]
     public bool isAlive = true;
+    public bool isinLight;
     public bool isCrouching = false;
     public Vector2 standSize;
     public Vector2 crouchSize;
+    public bool isTouchingLamp;
 
     [Header("Miscellaneous")]
     Vector2 moveInput;
@@ -135,6 +137,41 @@ public class PlayerMovement : MonoBehaviour
             playerRigidBody.velocity = playerCrouchVelocity;
         }
     }
+    public GameObject FindClosestEnemy()
+    {
+        GameObject[] gos;
+        gos = GameObject.FindGameObjectsWithTag("LightpointTrigger");
+        GameObject closest = null;
+        float distance = Mathf.Infinity;
+        Vector3 position = transform.position;
+        foreach (GameObject go in gos)
+        {
+            Vector3 diff = go.transform.position - position;
+            float curDistance = diff.sqrMagnitude;
+            if (curDistance < distance)
+            {
+                closest = go;
+                distance = curDistance;
+            }
+        }
+        return closest;
+    }
+    public void OnLight(InputValue value)
+    {
+        if (isTouchingLamp)
+        {
+            FindClosestEnemy().gameObject.GetComponent<ObjectBehavior>().Light();
+        }
+    }
+    public void OnPause(InputValue value)
+    {
+        FindObjectOfType<UIScript>().PauseGame();
+    }
+    public void OnCharge(InputValue value)
+    {
+
+    }
+
     public void MobileJump()
     {
         if (!isAlive || allowKeyControls || pauseCanvas.enabled)
@@ -182,8 +219,8 @@ public class PlayerMovement : MonoBehaviour
         {
             TextMeshProUGUI desktopDialogue = GameObject.Find("SignDialoguePC").GetComponent<TextMeshProUGUI>();
             TextMeshProUGUI mobileDialogue = GameObject.Find("SignDialogueMobile").GetComponent<TextMeshProUGUI>();
-            
-            if(allowKeyControls)
+
+            if (allowKeyControls)
             {
                 desktopDialogue.enabled = true;
                 desktopDialogue.text = collision.gameObject.GetComponent<SignDialogue>().desktopText;
@@ -194,6 +231,33 @@ public class PlayerMovement : MonoBehaviour
                 mobileDialogue.text = collision.gameObject.GetComponent<SignDialogue>().mobileText;
             }
         }
+        else if (collision.gameObject.tag == "LightpointTrigger")
+        {   
+            bool checkpointEnabled = collision.gameObject.GetComponent<ObjectBehavior>().isCheckpoint;
+            bool puzzleEnabled = collision.gameObject.GetComponent<ObjectBehavior>().isPuzzle;
+            bool isActive = collision.gameObject.GetComponent<ObjectBehavior>().active;
+            bool burntOut = collision.gameObject.GetComponent<ObjectBehavior>().burntOut;
+            isTouchingLamp = true;
+
+            if (!isActive && !burntOut && !puzzleEnabled && !checkpointEnabled)
+            {
+                TextMeshProUGUI desktopDialogue = GameObject.Find("SignDialoguePC").GetComponent<TextMeshProUGUI>();
+                TextMeshProUGUI mobileDialogue = GameObject.Find("SignDialogueMobile").GetComponent<TextMeshProUGUI>();
+
+                if (allowKeyControls)
+                {
+                    desktopDialogue.enabled = true;
+                    desktopDialogue.text = collision.gameObject.GetComponent<SignDialogue>().desktopText;
+                }
+                else
+                {
+                    mobileDialogue.enabled = true;
+                    mobileDialogue.text = collision.gameObject.GetComponent<SignDialogue>().mobileText;
+                }
+
+
+            }
+        }
     }
     private void OnTriggerExit2D(Collider2D collision)
     {
@@ -202,6 +266,15 @@ public class PlayerMovement : MonoBehaviour
             TextMeshProUGUI desktopDialogue = GameObject.Find("SignDialoguePC").GetComponent<TextMeshProUGUI>();
             TextMeshProUGUI mobileDialogue = GameObject.Find("SignDialogueMobile").GetComponent<TextMeshProUGUI>();
 
+            desktopDialogue.enabled = false;
+            mobileDialogue.enabled = false;
+        }
+        else if (collision.gameObject.tag == "LightpointTrigger")
+        {
+            TextMeshProUGUI desktopDialogue = GameObject.Find("SignDialoguePC").GetComponent<TextMeshProUGUI>();
+            TextMeshProUGUI mobileDialogue = GameObject.Find("SignDialogueMobile").GetComponent<TextMeshProUGUI>();
+
+            isTouchingLamp = false;
             desktopDialogue.enabled = false;
             mobileDialogue.enabled = false;
         }
