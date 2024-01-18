@@ -8,6 +8,7 @@ TagManager:
   - DialogueTrigger
   - PlayerProjectile
   - LightpointTrigger
+  - PuzzleObject
   layers:
   - Default
   - TransparentFX

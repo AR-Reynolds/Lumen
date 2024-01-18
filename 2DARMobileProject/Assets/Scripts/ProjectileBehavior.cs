@@ -12,8 +12,6 @@ public class ProjectileBehavior : MonoBehaviour
     [SerializeField] float fadeSpeed;
     [SerializeField] float outOfBoundsTime = 5f;
 
-
-    // Start is called before the first frame update
     void Start()
     {
         bulletActive = true;
@@ -23,11 +21,31 @@ public class ProjectileBehavior : MonoBehaviour
             rb.velocity = transform.right * (bulletSpeed + randomSpeed);
         }
     }
-
-    // Update is called once per frame
-    void Update()
+    public GameObject FindClosestEnemy()
     {
-
+        GameObject[] gos;
+        gos = GameObject.FindGameObjectsWithTag("LightpointTrigger");
+        GameObject closest = null;
+        float distance = Mathf.Infinity;
+        Vector3 position = transform.position;
+        foreach (GameObject go in gos)
+        {
+            Vector3 diff = go.transform.position - position;
+            float curDistance = diff.sqrMagnitude;
+            if (curDistance < distance)
+            {
+                closest = go;
+                distance = curDistance;
+            }
+        }
+        return closest;
+    }
+    private void OnTriggerEnter2D(Collider2D collision)
+    {
+        if (collision.gameObject.tag == "THELIGHT")
+        {
+            FindClosestEnemy().gameObject.GetComponent<ObjectBehavior>().Light();
+        }
     }
 
     private void OnTriggerExit2D(Collider2D collision)

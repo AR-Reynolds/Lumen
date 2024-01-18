@@ -56,6 +56,7 @@ public class UIScript : MonoBehaviour
         if(desktopEnabled)
         {
             desktopCanvas.enabled = false;
+            FindFirstObjectByType<PlayerShoot>().shootEnabled = false;
         }
         else
         {
@@ -70,6 +71,7 @@ public class UIScript : MonoBehaviour
         if (desktopEnabled)
         {
             desktopCanvas.enabled = true;
+            FindFirstObjectByType<PlayerShoot>().shootEnabled = true;
         }
         else
         {

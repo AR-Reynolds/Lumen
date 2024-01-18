@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class ObjectBehavior : MonoBehaviour
 {
+    public GameObject puzzleObject;
     public GameObject lampLight;
     public Color32 lampEnabled;
     public Color32 lampDisabled;
@@ -30,17 +31,50 @@ public class ObjectBehavior : MonoBehaviour
             {
                 lampLight.GetComponent<SpriteRenderer>().color = lampCheckpoint;
             }
-            else if (isPuzzle)
-            {
-                lampLight.GetComponent<SpriteRenderer>().color = lampPuzzle;
-            }
 
+        }
+        else
+        {
+            lampLight.GetComponent<SpriteRenderer>().color = lampDisabled;
         }
     }
 
     public void Light()
     {
-        active = true;
+        if(!active)
+        {
+            if(isPuzzle)
+            {
+                if(!puzzleObject.GetComponent<BoxCollider2D>().isTrigger)
+                {
+                    lampLight.GetComponent<SpriteRenderer>().color = lampPuzzle;
+                    puzzleObject.GetComponent<BoxCollider2D>().isTrigger = true;
+                }
+                else if (puzzleObject.GetComponent<BoxCollider2D>().isTrigger)
+                {
+                    lampLight.GetComponent<SpriteRenderer>().color = lampPuzzle;
+                    puzzleObject.GetComponent<BoxCollider2D>().isTrigger = false;
+                }
+            }
+            active = true;
+        }
+        else
+        {
+            if(isPuzzle)
+            {
+                if(!puzzleObject.GetComponent<BoxCollider2D>().isTrigger)
+                {
+                    lampLight.GetComponent<SpriteRenderer>().color = lampDisabled;
+                    puzzleObject.GetComponent<BoxCollider2D>().isTrigger = true;
+                }
+                else if (puzzleObject.GetComponent<BoxCollider2D>().isTrigger)
+                {
+                    lampLight.GetComponent<SpriteRenderer>().color = lampDisabled;
+                    puzzleObject.GetComponent<BoxCollider2D>().isTrigger = false;
+                }
+            }
+            active = false;
+        }
     }
 
 }

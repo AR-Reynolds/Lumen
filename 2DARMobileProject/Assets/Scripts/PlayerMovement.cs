@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using TMPro;
+using Unity.VisualScripting;
 
 public class PlayerMovement : MonoBehaviour
 {
@@ -158,14 +159,29 @@ public class PlayerMovement : MonoBehaviour
     }
     public void OnLight(InputValue value)
     {
+        TextMeshProUGUI desktopDialogue = GameObject.Find("SignDialoguePC").GetComponent<TextMeshProUGUI>();
+        TextMeshProUGUI mobileDialogue = GameObject.Find("SignDialogueMobile").GetComponent<TextMeshProUGUI>();
+
         if (isTouchingLamp)
         {
             FindClosestEnemy().gameObject.GetComponent<ObjectBehavior>().Light();
+            if(desktopDialogue.enabled || mobileDialogue.enabled)
+            {
+                desktopDialogue.enabled = false;
+                mobileDialogue.enabled = false;
+            }
         }
     }
     public void OnPause(InputValue value)
     {
-        FindObjectOfType<UIScript>().PauseGame();
+        if(FindObjectOfType<UIScript>().pauseCanvas.enabled)
+        {
+            FindObjectOfType<UIScript>().ResumeGame();
+        }
+        else
+        {
+            FindObjectOfType<UIScript>().PauseGame();
+        }
     }
     public void OnCharge(InputValue value)
     {
@@ -239,7 +255,7 @@ public class PlayerMovement : MonoBehaviour
             bool burntOut = collision.gameObject.GetComponent<ObjectBehavior>().burntOut;
             isTouchingLamp = true;
 
-            if (!isActive && !burntOut && !puzzleEnabled && !checkpointEnabled)
+            if (!isActive || !burntOut || !puzzleEnabled || !checkpointEnabled)
             {
                 TextMeshProUGUI desktopDialogue = GameObject.Find("SignDialoguePC").GetComponent<TextMeshProUGUI>();
                 TextMeshProUGUI mobileDialogue = GameObject.Find("SignDialogueMobile").GetComponent<TextMeshProUGUI>();
