@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 public class PlayerShoot : MonoBehaviour
 {
@@ -8,6 +9,8 @@ public class PlayerShoot : MonoBehaviour
     private Camera MainCam;
     float x = 1;
     float y = 0;
+    float timer;
+    bool timerOn;
     Rigidbody2D bulletRigidBody;
     SpriteRenderer spriteRenderer;
 
@@ -22,27 +25,31 @@ public class PlayerShoot : MonoBehaviour
     public GameObject automatic;
     public Transform firepoint;
 
-    // Start is called before the first frame update
     void Start()
     {
         spriteRenderer = GetComponent<SpriteRenderer>();
         bulletRigidBody = GetComponent<Rigidbody2D>();
-
+        timer = 0;
     }
 
-    public void automaticBulletShoot()
+    public void computerShoot()
     {
         Quaternion automaticRotation = transform.rotation;
         Vector3 worldMousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
         Vector3 rotation = transform.position - worldMousePos;
         float rot = Mathf.Atan2(rotation.y, rotation.x) * Mathf.Rad2Deg;
-        float automaticSpread = UnityEngine.Random.Range(-3, 3);
         automaticRotation = Quaternion.Euler(0, 0, rot + 180);
 
         GameObject bullet = Instantiate(automatic, firepoint.position, automaticRotation);
         bullet.transform.parent = bulletstorage.transform;
-        bullet.GetComponent<Rigidbody2D>().velocity = new Vector2(x, y) * bulletSpeed;
-        bullet.transform.Rotate(0, 0, automaticSpread);
+        if(timer < 2)
+        {
+            bullet.GetComponent<Rigidbody2D>().velocity = new Vector2(x, y) * bulletSpeed * chargeTime;
+        }
+        else
+        {
+            bullet.GetComponent<Rigidbody2D>().velocity = new Vector2(x, y) * bulletSpeed;
+        }
         Destroy(bullet, 3);
         StartCoroutine(CanShootAutomatic());
     }
@@ -51,31 +58,50 @@ public class PlayerShoot : MonoBehaviour
         bool isPC = FindFirstObjectByType<PlayerMovement>().allowKeyControls;
         if(!isPC)
         {
+            FixedJoystick joystick = FindFirstObjectByType<FirepointFollow>().joystick;
             Quaternion automaticRotation = transform.rotation;
-            Vector3 worldMousePos = Camera.main.ScreenToWorldPoint(Input.GetTouch(0).position);
+            Vector3 worldMousePos = new Vector2(joystick.Horizontal, joystick.Vertical);
             Vector3 rotation = transform.position - worldMousePos;
             float rot = Mathf.Atan2(rotation.y, rotation.x) * Mathf.Rad2Deg;
-            float automaticSpread = UnityEngine.Random.Range(-3, 3);
             automaticRotation = Quaternion.Euler(0, 0, rot + 180);
 
-            GameObject bullet = Instantiate(automatic, firepoint.position, automaticRotation);
+            GameObject bullet = Instantiate(automatic, transform.position, automaticRotation);
             bullet.transform.parent = bulletstorage.transform;
             bullet.GetComponent<Rigidbody2D>().velocity = new Vector2(x, y) * bulletSpeed;
-            bullet.transform.Rotate(0, 0, automaticSpread);
             Destroy(bullet, 3);
             StartCoroutine(CanShootAutomatic());
         }
     }
-
     IEnumerator CanShootAutomatic()
     {
         shootEnabled = false;
         yield return new WaitForSeconds(cooldown);
         shootEnabled = true;
     }
+    public void OnAttack(InputValue value)
+    {
+        bool isPC = FindFirstObjectByType<PlayerMovement>().allowKeyControls;
+        if (!isPC)
+        {
+            mobileBulletShoot();
+        }
+        else
+        {
+            computerShoot();
+        }
+    }
+    void Timer()
+    {
+        if (timerOn)
+        {
+            timer += Time.deltaTime;
+        }
+        else
+        {
+            timer = 0;
+        }
+    }
 
-
-    // Update is called once per frame
     void Update()
     {
         {
@@ -102,11 +128,6 @@ public class PlayerShoot : MonoBehaviour
                     y = tempY;
                 }
             }
-            if (Input.GetButton("Fire1") && shootEnabled)
-            {
-                automaticBulletShoot();
-            }
-
 
         }
     }

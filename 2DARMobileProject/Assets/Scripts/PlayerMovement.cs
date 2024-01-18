@@ -183,11 +183,6 @@ public class PlayerMovement : MonoBehaviour
             FindObjectOfType<UIScript>().PauseGame();
         }
     }
-    public void OnCharge(InputValue value)
-    {
-
-    }
-
     public void MobileJump()
     {
         if (!isAlive || allowKeyControls || pauseCanvas.enabled)
@@ -222,6 +217,7 @@ public class PlayerMovement : MonoBehaviour
             }   
         }
     }
+
     void Die()
     {
         if (PlayerPrefs.GetInt("Health") < 1)

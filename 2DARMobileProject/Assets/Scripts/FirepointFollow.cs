@@ -10,6 +10,7 @@ public class FirepointFollow : MonoBehaviour
     public bool flipped = false;
     public float xOffset = 0;
     public float yOffset = 0;
+    [SerializeField] public FixedJoystick joystick;
 
     // Start is called before the first frame update
     void Start()
@@ -29,7 +30,28 @@ public class FirepointFollow : MonoBehaviour
         Vector2 positionOnScreen = Camera.main.WorldToViewportPoint(transform.position);
         if(!isPC)
         {
+            Vector2 mouseOnScreen = (Vector2)joystick.transform.position;
+            float angle = AngleBetweenTwoPoints(positionOnScreen, mouseOnScreen);
+            transform.rotation = Quaternion.Euler(new Vector3(0f, 0f, angle));
 
+            Vector3 difference = joystick.transform.position - player.transform.position;
+            difference.Normalize();
+            float rotZ = Mathf.Atan2(joystick.Vertical, joystick.Horizontal) * Mathf.Rad2Deg;
+
+            if (rotZ > -95 && rotZ < 95 && !flipped)
+            {
+                flipped = true;
+                transform.localScale = new Vector3(transform.localScale.x, transform.localScale.y * -1, 0);
+            }
+            else
+            {
+                if (rotZ > 95 && rotZ < 180)
+                {
+                    flipped = false;
+                    transform.localScale = new Vector3(transform.localScale.x, Mathf.Abs(transform.localScale.y), 0);
+                    return;
+                }
+            }
         }
         else
         {
