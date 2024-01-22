@@ -4,6 +4,7 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 using TMPro;
 using Unity.VisualScripting;
+using System.Threading.Tasks;
 
 public class PlayerMovement : MonoBehaviour
 {
@@ -222,27 +223,35 @@ public class PlayerMovement : MonoBehaviour
     {
         if (PlayerPrefs.GetInt("Health") < 1)
         {
-            deathparticle.Play();
-            pauseCanvas = FindObjectOfType<UIScript>().pauseCanvas;
-            Canvas desktopCanvas = FindObjectOfType<UIScript>().desktopCanvas;
-            Canvas mobileCanvas = FindObjectOfType<UIScript>().mobileCanvas;
-            Canvas loseCanvas = FindObjectOfType<UIScript>().loseCanvas;
-
-            isAlive = false;
-            pauseCanvas.enabled = false;
-            if(allowKeyControls)
-            {
-                InputSystem.DisableDevice(Keyboard.current);
-                desktopCanvas.enabled = false;
-            }
-            else
-            {
-                mobileCanvas.enabled = false;
-            }
-            loseCanvas.enabled = true;
-
+            StartCoroutine(Death());
         }
     }
+    IEnumerator Death()
+    {
+        deathparticle.Play();
+        pauseCanvas = FindObjectOfType<UIScript>().pauseCanvas;
+        Canvas desktopCanvas = FindObjectOfType<UIScript>().desktopCanvas;
+        Canvas mobileCanvas = FindObjectOfType<UIScript>().mobileCanvas;
+        Canvas loseCanvas = FindObjectOfType<UIScript>().loseCanvas;
+        isAlive = false;
+        pauseCanvas.enabled = false;
+        if (allowKeyControls)
+        {
+            InputSystem.DisableDevice(Keyboard.current);
+            desktopCanvas.enabled = false;
+        }
+        else
+        {
+            mobileCanvas.enabled = false;
+        }
+
+        yield return new WaitForSeconds(1);
+
+        loseCanvas.enabled = true;
+
+
+    }
+
     private void OnTriggerEnter2D(Collider2D collision)
     {
         if (collision.gameObject.tag == "DialogueTrigger")

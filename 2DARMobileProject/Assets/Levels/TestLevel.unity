@@ -247,7 +247,7 @@ ParticleSystem:
   emitterVelocityMode: 1
   looping: 0
   prewarm: 0
-  playOnAwake: 1
+  playOnAwake: 0
   useUnscaledTime: 0
   autoRandomSeed: 1
   startDelay:
@@ -15636,7 +15636,8 @@ MonoBehaviour:
   isTouchingLamp: 0
   joystick: {fileID: 1497349027}
   joystik: {fileID: 1778315801}
-  allowKeyControls: 0
+  deathparticle: {fileID: 18987234}
+  allowKeyControls: 1
 --- !u!70 &2105135129
 CapsuleCollider2D:
   m_ObjectHideFlags: 0
