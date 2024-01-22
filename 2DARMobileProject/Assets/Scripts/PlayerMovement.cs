@@ -33,12 +33,17 @@ public class PlayerMovement : MonoBehaviour
     float startGravity;
     [Tooltip("Joystick for mobile")]
     [SerializeField] public FloatingJoystick joystick;
+    [Tooltip("test for mobile test")]
+    [SerializeField] public FixedJoystick joystik;
+    [Tooltip("DIED")]
+    [SerializeField] public ParticleSystem deathparticle;
     [Tooltip("Changes to keyboard controls (and disables mobile UI) if set to true.")]
     [SerializeField] public bool allowKeyControls = true;
 
     void Start()
     {
         PlayerPrefs.SetInt("Health", startHealth);
+        InputSystem.EnableDevice(Keyboard.current);
         playerJumpCollider = GetComponent<CapsuleCollider2D>();
         playerBodyCollider = GetComponent<BoxCollider2D>();
         playerRigidBody = GetComponent<Rigidbody2D>();
@@ -165,11 +170,6 @@ public class PlayerMovement : MonoBehaviour
         if (isTouchingLamp)
         {
             FindClosestEnemy().gameObject.GetComponent<ObjectBehavior>().Light();
-            if(desktopDialogue.enabled || mobileDialogue.enabled)
-            {
-                desktopDialogue.enabled = false;
-                mobileDialogue.enabled = false;
-            }
         }
     }
     public void OnPause(InputValue value)
@@ -222,7 +222,25 @@ public class PlayerMovement : MonoBehaviour
     {
         if (PlayerPrefs.GetInt("Health") < 1)
         {
+            deathparticle.Play();
+            pauseCanvas = FindObjectOfType<UIScript>().pauseCanvas;
+            Canvas desktopCanvas = FindObjectOfType<UIScript>().desktopCanvas;
+            Canvas mobileCanvas = FindObjectOfType<UIScript>().mobileCanvas;
+            Canvas loseCanvas = FindObjectOfType<UIScript>().loseCanvas;
+
             isAlive = false;
+            pauseCanvas.enabled = false;
+            if(allowKeyControls)
+            {
+                InputSystem.DisableDevice(Keyboard.current);
+                desktopCanvas.enabled = false;
+            }
+            else
+            {
+                mobileCanvas.enabled = false;
+            }
+            loseCanvas.enabled = true;
+
         }
     }
     private void OnTriggerEnter2D(Collider2D collision)
@@ -266,8 +284,26 @@ public class PlayerMovement : MonoBehaviour
                     mobileDialogue.enabled = true;
                     mobileDialogue.text = collision.gameObject.GetComponent<SignDialogue>().mobileText;
                 }
+            }
+            else if (isActive || !burntOut || puzzleEnabled || !checkpointEnabled)
+            {
+                TextMeshProUGUI desktopDialogue = GameObject.Find("SignDialoguePC").GetComponent<TextMeshProUGUI>();
+                TextMeshProUGUI mobileDialogue = GameObject.Find("SignDialogueMobile").GetComponent<TextMeshProUGUI>();
 
-
+                if (allowKeyControls)
+                {
+                    desktopDialogue.enabled = true;
+                    desktopDialogue.text = collision.gameObject.GetComponent<ObjectBehavior>().unlightTextPC;
+                }
+                else
+                {
+                    mobileDialogue.enabled = true;
+                    desktopDialogue.text = collision.gameObject.GetComponent<ObjectBehavior>().unlightTextMobile;
+                }
+            }
+            else
+            {
+                Debug.Log("NO");
             }
         }
     }
@@ -291,4 +327,13 @@ public class PlayerMovement : MonoBehaviour
             mobileDialogue.enabled = false;
         }
     }
+    private void OnCollisionEnter2D(Collision2D collision)
+    {
+        if (playerJumpCollider.IsTouchingLayers(LayerMask.GetMask("Hazard")) || playerBodyCollider.IsTouchingLayers(LayerMask.GetMask("Hazard")))
+        {
+            startHealth -= 1;
+            PlayerPrefs.SetFloat("Health", startHealth);
+        }
+    }
+
 }

@@ -7,7 +7,7 @@ using UnityEngine.UI;
 
 public class UIScript : MonoBehaviour
 {
-    Canvas desktopCanvas;
+    public Canvas desktopCanvas;
     public Canvas mobileCanvas;
     public Canvas pauseCanvas;
     public Canvas winCanvas;
@@ -15,6 +15,7 @@ public class UIScript : MonoBehaviour
 
     public bool desktopEnabled;
     public FloatingJoystick mobile_joystick;
+    public FixedJoystick mobiletest_joystick;
 
     void Start()
     {
@@ -25,6 +26,7 @@ public class UIScript : MonoBehaviour
         loseCanvas.enabled = false;
         desktopEnabled = FindFirstObjectByType<PlayerMovement>().allowKeyControls;
         mobile_joystick = FindFirstObjectByType<PlayerMovement>().joystick;
+        mobiletest_joystick = FindFirstObjectByType<PlayerMovement>().joystik;
     }
     void Update()
     {
@@ -37,12 +39,14 @@ public class UIScript : MonoBehaviour
             desktopCanvas.enabled = true;
             mobileCanvas.enabled = false;
             mobile_joystick.GetComponent<Image>().enabled = false;
+            mobiletest_joystick.GetComponent<Image>().enabled = false;
         }
         else
         {
             desktopCanvas.enabled = false;
             mobileCanvas.enabled = true;
             mobile_joystick.GetComponent<Image>().enabled = true;
+            mobiletest_joystick.GetComponent<Image>().enabled = true;
         }
     }
     public void Restart()
